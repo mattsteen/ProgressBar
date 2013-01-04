@@ -1,0 +1,162 @@
+<html>
+<head>
+<title>Progress Bar</title>
+</head>
+<body>
+
+
+<!-- Styles ************************* -->
+
+
+	<style type="text/css">
+        
+        body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; width: 945px; position: relative; margin: 0 auto; }
+      	
+		.fontLg { font-size: 16px; }
+		.fontSm { font-size: 10px; }
+		.bold { font-weight: bold; }
+		
+        .left { float: left; }
+        .right { float: right; }
+        .bottom { bottom: 0; }
+        .clear { clear: both; }
+        .clearLeft { clear: left; }
+        .clearRight { clear: right; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+     	
+		.progressBar{height: 18px; width: 180px; border: solid 1px #999b9d; -moz-border-radius: 2px; border-radius: 2px;}
+		.progressBlue{background-image:url('images/progress-blue-18.png'); background-repeat: repeat-x; background-position:top; overflow: hidden;}
+		.progressGrey{background-image:url('images/progress-grey-18.png'); background-repeat: repeat-x; background-position:top; overflow: hidden;}
+		
+		.error { color: red; display: none; }
+		
+    </style>
+
+
+<!-- HTML ************************* -->
+
+	<div style="padding: 50px">
+    
+    	<div class="fontLg bold">Progress Bar</div>
+    	
+        <div class="darkGray"><span id="progressText">0</span>% complete</div>
+
+        <div style="margin-bottom: 15px; margin-top: 5px">
+        
+            <div class="progressBar progressGrey">
+                                    
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td id="progressBlue" style="width: 0; height: 18px" class="progressBlue"></td>
+                    </tr>
+                </table>
+        
+            </div>
+        
+        	<div style="margin-top: 25px">
+            	<div class="left"><input id="updatePercent" type="text" ></div>
+                <div class="left"><input type="button" value="Update" onclick="updatePercentClick()"></div>
+                <div class="left"><input type="button" value="Reset" onclick="resetClick()"></div>
+            	<div class="clear"></div>
+            </div>
+        
+        	<div class="error" style="margin-top: 10px;">Please enter a value between 1 and 100!</div>
+        
+        </div>
+        
+    </div>
+
+	
+
+<!-- Scripts ************************* -->
+
+
+	<script src="js/jquery-1.8.3.js"></script>
+    <script type="text/javascript">
+    	
+		// Note: Percent is in decimal form (50% = .50)
+		
+        $(document).ready(function(){
+			
+			updateProgressBar(.50);
+			
+		});
+    
+		function updatePercentClick()
+		{
+			$(".error").hide();
+			
+			var updatePercent = $("#updatePercent").val();
+			
+			if (parseInt(updatePercent))
+			{
+				updatePercent = parseInt(updatePercent);
+				
+				if ((updatePercent >= 1) || (updatePercent <= 100))
+				{
+					updateProgressBar(updatePercent/100);
+					return;
+				}
+				
+			}
+			
+			$(".error").show();
+			
+		}
+		
+		function resetClick()
+		{
+			$("#progressText").html("0");
+			$("#updatePercent").val("");
+			updateProgressBar(0);
+		}
+		
+		function updateProgressBar(newPercentComplete) {
+			
+			var progressPercentComplete = newPercentComplete;
+			var progressPercentCompleteDisplay = Math.ceil(progressPercentComplete * 100);
+			var currentPercentComplete = $("#progressText").html();
+			
+			if (parseInt(currentPercentComplete) <= progressPercentCompleteDisplay)
+			{
+
+				var progressBarWidth = $(".progressBar").width();
+				var currentBarWidth = progressBarWidth * progressPercentComplete; 
+
+				if (currentBarWidth > progressBarWidth) { currentBarWidth = progressBarWidth; }
+
+				// Progress Bar ***************
+
+					if (progressPercentCompleteDisplay > 0)
+					{ 
+						$("#progressBlue").html("&nbsp;");
+						$("#progressBlue").animate({ 
+						
+							width: currentBarWidth
+						
+							}, {
+						        complete: function(){},
+								duration: 600,
+								step: function(){
+							
+								var currrentPercent = Math.ceil(($("#progressBlue").width() / progressBarWidth) * 100);
+								$("#progressText").html(currrentPercent);
+						
+								}
+						    }
+                            
+                            );
+
+					}
+					else
+					{
+						$("#progressBlue").width(progressPercentCompleteDisplay);
+					}
+			}
+		}
+		
+    </script>
+
+</body>
+</html>
